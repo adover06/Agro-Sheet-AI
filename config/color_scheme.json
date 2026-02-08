@@ -1,0 +1,42 @@
+{
+  "color_scheme": {
+    "projects": {
+      "hex": "#4A90E2",
+      "rgb": [74, 144, 226],
+      "description": "Project-related tasks"
+    },
+    "school": {
+      "hex": "#E74C3C",
+      "rgb": [231, 76, 60],
+      "description": "School/academic work"
+    },
+    "personal": {
+      "hex": "#27AE60",
+      "rgb": [39, 174, 96],
+      "description": "Personal activities (prayer, cooking, etc)"
+    },
+    "breaks": {
+      "hex": "#F39C12",
+      "rgb": [243, 156, 18],
+      "description": "Breaks and rest time"
+    },
+    "fixed_events": {
+      "hex": "#95A5A6",
+      "rgb": [149, 165, 166],
+      "description": "Fixed/scheduled events"
+    },
+    "unscheduled": {
+      "hex": "#BDC3C7",
+      "rgb": [189, 195, 199],
+      "description": "Empty time blocks"
+    }
+  },
+  "task_categories": {
+    "project": "projects",
+    "school": "school",
+    "personal": "personal",
+    "break": "breaks",
+    "fixed": "fixed_events",
+    "empty": "unscheduled"
+  }
+}

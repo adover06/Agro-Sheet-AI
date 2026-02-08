@@ -1,0 +1,52 @@
+# Fixed Events Configuration
+# 
+# Types of events:
+# 1. Fixed time events: Occur at specific times
+#    - start_time: HH:MM (24-hour format)
+#    - end_time: HH:MM
+# 
+# 2. Flexible daily obligations: Can be placed at any time (agent decides based on preferences)
+#    - flexible: true
+#    - duration: minutes
+# 
+# Days: Can be "Monday" through "Sunday" or use "Daily" for recurring
+
+fixed_events:
+  # Classes and scheduled events with fixed times
+  - name: "Math Class"
+    days: ["Monday", "Wednesday", "Friday"]
+    start_time: "09:00"
+    end_time: "10:30"
+    flexible: false
+    is_free: false
+    category: "school"
+
+  - name: "Lunch Break"
+    days: ["Daily"]
+    start_time: "12:00"
+    end_time: "13:00"
+    flexible: false
+    is_free: true
+    category: "break"
+
+  # Flexible daily obligations (agent will place these intelligently)
+  - name: "Morning Prayer"
+    days: ["Daily"]
+    duration: 30  # minutes
+    flexible: true
+    is_free: false
+    category: "personal"
+
+  - name: "Cooking Dinner"
+    days: ["Daily"]
+    duration: 60  # minutes
+    flexible: true
+    is_free: false
+    category: "personal"
+
+  - name: "Quick Break/Snack"
+    days: ["Daily"]
+    duration: 15  # minutes
+    flexible: true
+    is_free: true
+    category: "break"
