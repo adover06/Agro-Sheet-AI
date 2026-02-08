@@ -4,119 +4,104 @@ Complete this checklist to get your Daily Schedule AI Orchestrator up and runnin
 
 ## Prerequisites
 - [ ] Python 3.8 or higher installed
-- [ ] Microsoft account with Microsoft Todo
-- [ ] Google account with Google Drive/Sheets
-- [ ] OpenAI account (for future enhancements)
+- [ ] Google account with Google Tasks
+- [ ] Google account with Google Drive/Sheets (can be same account)
+- [ ] Gemini Pro API key
 
 ## Step 1: Install Dependencies
 - [ ] Run `pip install -r requirements.txt`
 - [ ] Verify installations completed without errors
 
-## Step 2: Set Up Microsoft OAuth
-- [ ] Go to https://portal.azure.com/
-- [ ] Create app registration for "Daily Schedule Orchestrator"
-- [ ] Copy Client ID to safe location
-- [ ] Create client secret and copy it
-- [ ] Set Redirect URI to: `http://localhost:8000/callback`
-- [ ] Keep these credentials safe - you'll need them next
-
-## Step 3: Create .env File
-- [ ] Copy `.env.example` to `.env`
-- [ ] Add Microsoft Client ID from Step 2
-- [ ] Add Microsoft Client Secret from Step 2
-- [ ] Add Redirect URI: `http://localhost:8000/callback`
-
-## Step 4: Set Up Google Sheets API
+## Step 2: Set Up Google Credentials
 - [ ] Go to https://console.cloud.google.com/
-- [ ] Create new project
+- [ ] Create new project (or select existing)
+- [ ] Enable "Google Tasks API"
 - [ ] Enable "Google Sheets API"
-- [ ] Create Service Account
-- [ ] Generate JSON key from service account
-- [ ] Download and save to `config/google_credentials.json`
-- [ ] Copy service account email
+- [ ] Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
+- [ ] Select "Desktop application"
+- [ ] Download JSON file
+- [ ] Save to `config/google_credentials.json`
 
-## Step 5: Create Google Sheet
-- [ ] Create new Google Sheet
-- [ ] Add headers: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
-- [ ] (Optional) Add time labels in first column: 9:00-9:30, 9:30-10:00, etc.
-- [ ] Copy Sheet ID from URL
-- [ ] Add to `.env` as `GOOGLE_SHEETS_ID`
-- [ ] Share sheet with service account email from Step 4
+## Step 3: Get Gemini Pro API Key
+- [ ] Go to https://makersuite.google.com/app/apikey
+- [ ] Click "Get API Key"
+- [ ] Create new API key
+- [ ] Copy and keep it safe
 
-## Step 6: Set Up .env File (Complete)
-- [ ] `MICROSOFT_CLIENT_ID` = Your Microsoft client ID
-- [ ] `MICROSOFT_CLIENT_SECRET` = Your Microsoft client secret
-- [ ] `MICROSOFT_REDIRECT_URI` = `http://localhost:8000/callback`
-- [ ] `GOOGLE_SHEETS_ID` = Your Google Sheet ID
-- [ ] `GOOGLE_SHEETS_CREDENTIALS` = `config/google_credentials.json`
-- [ ] `OPENAI_API_KEY` = Your OpenAI API key (optional for now)
+## Step 4: Create .env File
+- [ ] Copy `.env.example` to `.env`
+- [ ] You'll populate this using setup commands (next step)
 
-## Step 7: Configure Fixed Events
+## Step 5: Run Setup Commands
+- [ ] Run `python main.py setup-oauth`
+  - Enter path to `config/google_credentials.json`
+- [ ] Run `python main.py setup-openai`
+  - Paste your Gemini Pro API key
+- [ ] Run `python main.py setup-google-sheets` (optional)
+  - Get your Google Sheet ID from the URL
+  - Share sheet with your Google account
+
+## Step 6: Configure Fixed Events
 - [ ] Open `config/fixed_events.yaml`
 - [ ] Add your classes (with specific times)
 - [ ] Add your weekly recurring events
 - [ ] Add daily obligations (prayer, cooking, breaks)
 - [ ] Verify YAML syntax is correct
 
-## Step 8: Create "Important" List in Microsoft Todo
-- [ ] Open Microsoft Todo
-- [ ] Create a list named "Important" (exactly this name)
-- [ ] This is where you'll star tasks to be scheduled
+## Step 7: Prepare Google Tasks
+- [ ] Open Google Tasks (tasks.google.com)
+- [ ] Add tasks you want to schedule
+- [ ] You can organize them into different lists
+- [ ] (Optional) Add time in notes like "2-3pm" or "9:00-10:00"
 
-## Step 9: Test the Setup
+## Step 8: Test the Setup
 - [ ] Run `python main.py view-schedule` (should show empty/fixed events only)
 - [ ] Run `python demo.py` (test with sample tasks)
 - [ ] Review the output in `schedule_demo.json`
 
-## Step 10: Add Tasks and Sync
-- [ ] Open Microsoft Todo
-- [ ] Add some test tasks with time markers (e.g., "Project work 2-3pm")
-- [ ] Star/mark important the tasks you want in your schedule
+## Step 9: Run Your First Sync
 - [ ] Run `python main.py sync`
-- [ ] First time will prompt for Microsoft authentication - follow the link
-- [ ] Enter the authorization code when prompted
-- [ ] Review the output
+- [ ] Wait for Gemini to analyze and schedule your tasks
+- [ ] Review the output in terminal
 
-## Step 11: Check Results
+## Step 10: Check Results
 - [ ] Open `schedule_output.json` to see the schedule
 - [ ] Run `python main.py view-schedule` to see formatted output
 - [ ] Check your Google Sheet - should be updated with your schedule
 - [ ] Verify tasks are color-coded correctly
 
-## Step 12: Customize (Optional)
+## Step 11: Customize (Optional)
 - [ ] Edit `config/color_scheme.json` to change colors if desired
 - [ ] Run `python main.py sync` again to test new colors
 - [ ] Update fixed events in YAML as needed
 - [ ] Adjust task categories by adding keywords
 
-## Step 13: Daily Usage
-- [ ] Each morning, add tasks to Microsoft Todo
-- [ ] Star the tasks you want to schedule
+## Step 12: Daily Usage
+- [ ] Each morning, add tasks to Google Tasks
 - [ ] Run `python main.py sync`
-- [ ] Review your schedule in Google Sheets
+- [ ] Review your schedule in Google Sheets or terminal
 - [ ] Done! Your day is perfectly scheduled
 
 ## Troubleshooting Checklist
 
 ### Authentication Issues
-- [ ] Are Client ID and Secret correct?
-- [ ] Is Redirect URI exactly: `http://localhost:8000/callback`?
-- [ ] Did you delete `config/microsoft_token.json` to force re-auth?
+- [ ] Is the credentials file valid JSON?
+- [ ] Did you copy the correct file to `config/google_credentials.json`?
+- [ ] Is GEMINI_API_KEY set correctly in .env?
 
 ### Tasks Not Appearing
-- [ ] Is there a list named "Important" in Microsoft Todo?
-- [ ] Are tasks actually starred/marked important?
+- [ ] Do you have tasks in Google Tasks?
 - [ ] Check console output for error messages
+- [ ] Verify credentials file is valid
 
 ### Google Sheets Not Updating
 - [ ] Is the credentials file valid JSON?
 - [ ] Does the Sheet ID match your actual spreadsheet?
-- [ ] Has the service account email been added as editor?
-- [ ] Is the sheet publicly readable (or shared with service account)?
+- [ ] Is the sheet shared with your Google account?
 
 ### Schedule Looks Wrong
 - [ ] Are fixed events properly configured in YAML?
-- [ ] Do tasks have time format "HH:MM-HH:MM" (e.g., "9-10am")?
+- [ ] Do tasks have time format "HH:MM-HH:MM" (e.g., "9-10am") in notes?
 - [ ] Are you using a recognized time format?
 - [ ] Check the `schedule_output.json` for raw schedule data
 

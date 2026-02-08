@@ -8,7 +8,6 @@ from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
 from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.urllib3_http import Http
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from schedule_models import WeeklySchedule, DailySchedule

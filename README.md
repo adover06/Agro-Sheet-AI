@@ -1,16 +1,17 @@
 # Daily Schedule AI Orchestrator
 
-A Python CLI tool that intelligently schedules your tasks from Microsoft Todo, combines them with your fixed events, and syncs everything to a Google Sheets calendar.
+A Python CLI tool that intelligently schedules your tasks from Google Tasks using AI, combines them with your fixed events, and syncs everything to a Google Sheets calendar.
 
 ## Features
 
-- **Microsoft Todo Integration**: Fetches starred tasks from your "Important" list
-- **Intelligent Scheduling**: Uses an AI agent to schedule tasks based on your preferences (night owl, project bias)
+- **Google Tasks Integration**: Fetches tasks from your Google Tasks lists
+- **Gemini Pro AI**: Uses Google's Gemini Pro model for intelligent scheduling
 - **Fixed Events**: YAML-based configuration for classes, recurring activities, and flexible daily obligations
 - **Time-Aware Parsing**: Automatically detects time constraints in task titles (e.g., "morning run 9-10am")
 - **Task Splitting**: Automatically splits tasks longer than 2 hours
 - **Google Sheets Sync**: Updates your weekly schedule spreadsheet with color-coded blocks
 - **Local Export**: Saves schedule as JSON for testing and reference
+- **No Subscriptions**: Uses free Google services and Gemini Pro API
 
 ## Project Structure
 
@@ -21,8 +22,8 @@ Agro-Sheet/
 ├── task_parser.py              # Task parsing and time extraction utilities
 ├── config_loader.py            # YAML configuration loader
 ├── fixed_events_placement.py   # Fixed events scheduling logic
-├── scheduling_agent.py         # Intelligent scheduling agent
-├── microsoft_auth.py           # Microsoft OAuth and Todo API integration
+├── gemini_scheduling.py        # Gemini Pro-powered scheduling agent
+├── google_tasks.py             # Google Tasks API integration
 ├── google_sheets.py            # Google Sheets API integration
 ├── config/
 │   ├── fixed_events.yaml       # Your fixed events configuration
@@ -41,21 +42,34 @@ Agro-Sheet/
 pip install -r requirements.txt
 ```
 
-### 2. Set Up Environment Variables
+### 2. Set Up Google Credentials
 
-Copy `.env.example` to `.env` and fill in your credentials:
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project
+3. Enable **Google Tasks API** and **Google Sheets API**
+4. Create OAuth 2.0 Desktop credentials
+5. Download JSON and save to `config/google_credentials.json`
+
+### 3. Get Gemini Pro API Key
+
+1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create new API key
+3. Save for later setup
+
+### 4. Run Setup Commands
 
 ```bash
-cp .env.example .env
+# Setup Google Tasks credentials
+python main.py setup-oauth
+
+# Setup Gemini Pro API key
+python main.py setup-openai
+
+# Setup Google Sheets (optional)
+python main.py setup-google-sheets
 ```
 
-Edit `.env` with:
-- `MICROSOFT_CLIENT_ID`: Your Microsoft OAuth Client ID
-- `MICROSOFT_CLIENT_SECRET`: Your Microsoft OAuth Client Secret
-- `GOOGLE_SHEETS_ID`: Your Google Sheets spreadsheet ID
-- `OPENAI_API_KEY`: Your OpenAI API key (for future LangChain integration)
-
-### 3. Configure Fixed Events
+### 5. Configure Fixed Events
 
 Edit `config/fixed_events.yaml` to add your classes, recurring events, and flexible daily activities:
 
@@ -75,21 +89,6 @@ fixed_events:
     category: "personal"
 ```
 
-### 4. Set Up Google Sheets API
-
-1. Create a project in [Google Cloud Console](https://console.cloud.google.com/)
-2. Enable the Google Sheets API
-3. Create a Service Account and download the JSON credentials file
-4. Place the credentials file at `config/google_credentials.json`
-5. Share your Google Sheet with the service account email
-
-### 5. Set Up Microsoft OAuth
-
-1. Register an app in [Microsoft Azure Portal](https://portal.azure.com/)
-2. Create OAuth credentials (Client ID and Secret)
-3. Note your Application ID and create a client secret
-4. Add `http://localhost:8000/callback` as a redirect URI
-
 ## Usage
 
 ### Synchronize Schedule
@@ -99,13 +98,13 @@ python main.py sync
 ```
 
 This will:
-1. Authenticate with Microsoft Todo (or use cached credentials)
-2. Fetch your starred tasks
+1. Authenticate with Google Tasks
+2. Fetch your tasks
 3. Parse tasks and detect time constraints
 4. Place fixed events in the schedule
-5. Use the scheduling agent to intelligently place tasks
+5. Use Gemini Pro AI to intelligently place tasks
 6. Save to `schedule_output.json`
-7. Sync to your Google Sheets
+7. Sync to your Google Sheets (if configured)
 
 ### View Current Schedule
 
@@ -116,13 +115,13 @@ python main.py view-schedule
 ### Interactive Setup Commands
 
 ```bash
-# Set up Microsoft OAuth
+# Set up Google Tasks
 python main.py setup-oauth
 
 # Set up Google Sheets
 python main.py setup-google-sheets
 
-# Set up OpenAI API
+# Set up Gemini Pro
 python main.py setup-openai
 ```
 
@@ -130,17 +129,24 @@ python main.py setup-openai
 
 ### Task Parsing
 
-The system parses your Microsoft Todo tasks and:
+The system parses your Google Tasks and:
 - Detects time constraints in titles (e.g., "morning run 9-10am")
 - Estimates duration based on keywords and task description
 - Categorizes tasks as "projects", "school", or "personal"
-- Respects the "Important" list for task selection
+- Extracts due dates and importance indicators
 
-### Intelligent Scheduling
+### Intelligent Scheduling with Gemini Pro
 
-The `SchedulingAgent` places tasks based on:
-- **Night Owl Preference**: Favors later time slots (after 3 PM)
-- **Project Bias**: Allocates better time slots for project work vs. school
+The `GeminiSchedulingAgent` uses Google's Gemini Pro model to:
+- Analyze all your tasks and their characteristics
+- Determine optimal scheduling order using natural language understanding
+- Consider priorities, deadlines, and task categories
+- Respect preferences for night owl schedules
+- Allocate better time slots for project work vs. school
+
+**Preferences:**
+- **Night Owl Schedule**: Favors later time slots (after 12 PM)
+- **Project Bias**: Better time slots for project work
 - **Time Constraints**: Places time-constrained tasks at specified times
 - **Task Importance**: High-importance tasks get priority
 - **Task Splitting**: Tasks over 2 hours are split into 2 parts
@@ -186,29 +192,40 @@ Your spreadsheet will have:
 
 ## Troubleshooting
 
-### "Important" list not found
-Make sure you have a list named exactly "Important" in your Microsoft Todo account. The system pulls from this list specifically.
+### Tasks not appearing
+- Verify you have tasks in Google Tasks
+- Check that Google credentials are valid
+- Verify credentials file is at `config/google_credentials.json`
 
-### Tasks not getting scheduled
-Check the console output for warnings about task conflicts. Tasks longer than 2 hours will be split or skipped if they can't fit.
+### Gemini API errors
+- Verify `GEMINI_API_KEY` is set correctly in `.env`
+- Check that API key has access at https://makersuite.google.com/app/apikey
 
 ### Google Sheets not updating
 Verify that:
 1. The credentials file is correct and accessible
-2. The service account email has access to your spreadsheet
-3. The `GOOGLE_SHEETS_ID` environment variable is set correctly
+2. The `GOOGLE_SHEETS_ID` environment variable is set correctly
+3. The sheet is shared with your Google account
 
-### Token refresh issues
-Delete `config/microsoft_token.json` to force re-authentication on next run.
+## Environment Variables
+
+After setup, your `.env` will contain:
+
+```env
+GOOGLE_TASKS_CREDENTIALS=config/google_credentials.json
+GOOGLE_SHEETS_ID=your_spreadsheet_id
+GOOGLE_SHEETS_CREDENTIALS=config/google_credentials.json
+GEMINI_API_KEY=your_gemini_api_key
+```
 
 ## Future Enhancements
 
-- LangChain agent for more sophisticated scheduling decisions
-- Natural language task parsing
-- Calendar integration (Outlook, Google Calendar)
-- Web dashboard
+- Multi-turn conversations with Gemini for task clarification
+- Smart task duration estimation using AI
+- Real-time task updates from Google Tasks
+- Integration with Google Calendar for automatic fixed events
+- Web dashboard for schedule management
 - Recurring task support
-- Task estimation based on historical data
 
 ## License
 

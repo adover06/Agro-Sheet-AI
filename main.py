@@ -1,5 +1,6 @@
 """
 Main CLI application for Daily Schedule AI Orchestrator
+Now using Google Tasks and Gemini Pro
 """
 import os
 import sys
@@ -12,8 +13,8 @@ from schedule_models import create_empty_schedule, save_schedule_to_json, Weekly
 from task_parser import parse_task_from_todo, parse_time_from_text, categorize_task
 from config_loader import load_fixed_events_config
 from fixed_events_placement import place_fixed_events
-from scheduling_agent import SchedulingAgent
-from microsoft_auth import MicrosoftOAuthManager, MicrosoftTodoAPI
+from gemini_scheduling import GeminiSchedulingAgent
+from google_tasks import GoogleTasksAPI
 from google_sheets import GoogleSheetsManager
 
 load_dotenv()
@@ -28,34 +29,25 @@ def cli():
 @cli.command()
 @click.option('--day', type=click.Choice(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']), help='Specific day to schedule')
 def sync(day):
-    """Sync tasks from Microsoft Todo and generate schedule"""
+    """Sync tasks from Google Tasks and generate schedule using Gemini AI"""
     try:
         click.echo("🔄 Starting schedule synchronization...")
         
-        # Step 1: Authenticate with Microsoft
-        click.echo("\n📝 Authenticating with Microsoft Todo...")
-        oauth_manager = MicrosoftOAuthManager()
+        # Step 1: Authenticate with Google Tasks
+        click.echo("\n📝 Authenticating with Google Tasks...")
+        try:
+            tasks_api = GoogleTasksAPI()
+            click.echo("✓ Google Tasks authenticated")
+        except Exception as e:
+            click.echo(f"Error: Failed to authenticate with Google Tasks - {e}", err=True)
+            sys.exit(1)
         
-        # Try to load cached token first
-        if not oauth_manager.load_cached_token():
-            click.echo("No cached credentials found. Please authenticate...")
-            auth_url, state = oauth_manager.get_authorization_url()
-            click.echo(f"Please visit this URL to authorize: {auth_url}")
-            
-            auth_code = click.prompt("Enter the authorization code from the redirect URL")
-            if not oauth_manager.get_token_from_code(auth_code, state):
-                click.echo("Error: Failed to obtain access token", err=True)
-                sys.exit(1)
-        else:
-            click.echo("✓ Using cached credentials")
-        
-        # Step 2: Fetch tasks from Microsoft Todo
-        click.echo("\n📋 Fetching starred tasks from Microsoft Todo...")
-        todo_api = MicrosoftTodoAPI(oauth_manager)
-        todo_items = todo_api.get_important_tasks()
+        # Step 2: Fetch tasks from Google Tasks
+        click.echo("\n📋 Fetching tasks from Google Tasks...")
+        todo_items = tasks_api.get_important_tasks()
         
         if not todo_items:
-            click.echo("Warning: No tasks found in Important list")
+            click.echo("Warning: No tasks found in Google Tasks")
             todo_items = []
         else:
             click.echo(f"✓ Found {len(todo_items)} tasks")
@@ -88,15 +80,19 @@ def sync(day):
         if flexible_events:
             click.echo(f"  - {len(flexible_events)} flexible events to place intelligently")
         
-        # Step 7: Run scheduling agent
-        click.echo("\n🤖 Running intelligent scheduling agent...")
-        agent = SchedulingAgent(schedule)
-        success = agent.schedule_tasks(tasks, flexible_events)
-        
-        if success:
-            click.echo("✓ Tasks scheduled successfully")
-        else:
-            click.echo("Warning: Some tasks could not be scheduled", err=True)
+        # Step 7: Run Gemini scheduling agent
+        click.echo("\n🤖 Running Gemini AI scheduling agent...")
+        try:
+            agent = GeminiSchedulingAgent(schedule)
+            success = agent.schedule_tasks(tasks, flexible_events)
+            
+            if success:
+                click.echo("✓ Tasks scheduled successfully")
+            else:
+                click.echo("Warning: Some tasks could not be scheduled", err=True)
+        except Exception as e:
+            click.echo(f"Error: Gemini scheduling failed - {e}", err=True)
+            sys.exit(1)
         
         # Step 8: Load color scheme
         click.echo("\n🎨 Loading color scheme...")
@@ -129,25 +125,31 @@ def sync(day):
 
 @cli.command()
 def setup_oauth():
-    """Set up Microsoft OAuth credentials"""
+    """Set up Google Tasks API credentials"""
     try:
-        click.echo("🔐 Microsoft OAuth Setup")
+        click.echo("🔐 Google Tasks Setup")
         click.echo("=" * 40)
         
-        client_id = click.prompt("Enter your Microsoft Client ID")
-        client_secret = click.prompt("Enter your Microsoft Client Secret")
-        redirect_uri = click.prompt("Enter your redirect URI", default="http://localhost:8000/callback")
+        credentials_path = click.prompt(
+            "Enter path to your Google credentials JSON file",
+            default="config/google_credentials.json"
+        )
+        
+        # Verify credentials file exists
+        if not os.path.exists(credentials_path):
+            click.echo(f"Warning: Credentials file not found at {credentials_path}", err=True)
+            click.echo("Please download it from Google Cloud Console:")
+            click.echo("1. Go to https://console.cloud.google.com/")
+            click.echo("2. Create a new project or select existing one")
+            click.echo("3. Enable Google Tasks API")
+            click.echo("4. Create OAuth 2.0 Desktop credentials")
+            click.echo("5. Download the JSON file and save to the path above")
         
         # Update .env file
-        env_content = f"""MICROSOFT_CLIENT_ID={client_id}
-MICROSOFT_CLIENT_SECRET={client_secret}
-MICROSOFT_REDIRECT_URI={redirect_uri}
-"""
-        
         with open('.env', 'a') as f:
-            f.write(env_content)
+            f.write(f"\nGOOGLE_TASKS_CREDENTIALS={credentials_path}\n")
         
-        click.echo("✓ OAuth credentials saved to .env")
+        click.echo("✓ Google Tasks configuration saved to .env")
         
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
@@ -183,17 +185,19 @@ def setup_google_sheets():
 
 @cli.command()
 def setup_openai():
-    """Set up OpenAI API key"""
+    """Set up Gemini Pro API key"""
     try:
-        click.echo("🔑 OpenAI API Setup")
+        click.echo("🔑 Gemini Pro API Setup")
         click.echo("=" * 40)
         
-        api_key = click.prompt("Enter your OpenAI API key")
+        api_key = click.prompt("Enter your Gemini Pro API key")
         
         with open('.env', 'a') as f:
-            f.write(f"\nOPENAI_API_KEY={api_key}\n")
+            f.write(f"\nGEMINI_API_KEY={api_key}\n")
         
-        click.echo("✓ OpenAI API key saved to .env")
+        click.echo("✓ Gemini Pro API key saved to .env")
+        click.echo("\nYou can get your Gemini API key at:")
+        click.echo("https://makersuite.google.com/app/apikey")
         
     except Exception as e:
         click.echo(f"Error: {e}", err=True)

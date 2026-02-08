@@ -1,5 +1,5 @@
 """
-Demo mode to test scheduling without Microsoft authentication
+Demo mode to test scheduling without authentication
 """
 import json
 from schedule_models import Task, create_empty_schedule, save_schedule_to_json
@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 def demo_schedule():
     """
     Create a demo schedule with sample tasks and fixed events
-    Useful for testing without Microsoft authentication
+    Useful for testing without authentication
     """
     
     print("🎯 Demo: Creating sample schedule...")

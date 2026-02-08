@@ -114,10 +114,13 @@ def categorize_task(title: str, description: str = "") -> str:
 
 def parse_task_from_todo(todo_item: dict) -> Task:
     """
-    Parse a task from Microsoft Todo API response
+    Parse a task from Google Tasks API response
     """
+    # Handle Google Tasks format
     title = todo_item.get('title', 'Untitled')
-    description = todo_item.get('bodyPreview', '') or todo_item.get('body', {}).get('content', '')
+    
+    # Google Tasks uses 'notes' field for description
+    description = todo_item.get('notes', '')
     
     # Check for time constraints in title or description
     full_text = title + " " + description
@@ -134,15 +137,26 @@ def parse_task_from_todo(todo_item: dict) -> Task:
     
     category = categorize_task(title, description)
     
+    # Google Tasks doesn't have importance, check description for hints
+    importance = 'normal'  # Default medium importance
+    if 'important' in full_text.lower() or 'urgent' in full_text.lower():
+        importance = 'high'
+    elif 'low priority' in full_text.lower():
+        importance = 'low'
+    
+    # Parse due date from Google Tasks format (YYYY-MM-DD)
+    due_date = todo_item.get('due', None)
+    
     return Task(
         id=todo_item.get('id', ''),
         title=title,
         description=description,
-        importance='high' if todo_item.get('importance', 'normal') == 'high' else 'normal',
+        importance=importance,
         estimated_duration=estimated_duration,
         has_time_constraint=time_constraint is not None,
         constraint_start_time=time_constraint[0] if time_constraint else None,
         constraint_end_time=time_constraint[1] if time_constraint else None,
         category=category,
-        is_starred=True
+        is_starred=True,
+        due_date=due_date
     )

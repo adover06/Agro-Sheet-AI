@@ -59,7 +59,7 @@ class WeeklySchedule:
 
 @dataclass
 class Task:
-    """Represents a task from Microsoft Todo"""
+    """Represents a task from Google Tasks"""
     id: str
     title: str
     description: Optional[str] = None
