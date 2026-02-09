@@ -112,6 +112,28 @@ def categorize_task(title: str, description: str = "") -> str:
     return 'school'
 
 
+def extract_duration_from_text(text: str) -> Optional[int]:
+    """
+    Extract duration from text like '1 hour', '2.5 hours', '30 mins'
+    Returns: duration in minutes or None
+    """
+    # Pattern for "N hours" or "N.N hours"
+    hour_pattern = r'(\d+(?:\.\d+)?)\s*(?:hour|hr|hours|hrs)\b'
+    hour_match = re.search(hour_pattern, text, re.IGNORECASE)
+    if hour_match:
+        hours = float(hour_match.group(1))
+        return int(hours * 60)
+        
+    # Pattern for "N minutes"
+    min_pattern = r'(\d+)\s*(?:minute|min|minutes|mins)\b'
+    min_match = re.search(min_pattern, text, re.IGNORECASE)
+    if min_match:
+        minutes = int(min_match.group(1))
+        return minutes
+        
+    return None
+
+
 def parse_task_from_todo(todo_item: dict) -> Task:
     """
     Parse a task from Google Tasks API response
@@ -121,19 +143,33 @@ def parse_task_from_todo(todo_item: dict) -> Task:
     
     # Google Tasks uses 'notes' field for description
     description = todo_item.get('notes', '')
+    if description is None:
+        description = ""
     
     # Check for time constraints in title or description
     full_text = title + " " + description
     time_constraint = parse_time_from_text(full_text)
     
-    # Estimate duration if not found in title/description
+    # Estimate duration:
+    # 1. Check for time constraint range (e.g. 9-10am)
+    # 2. Check for explicit duration string (e.g. 1 hour)
+    # 3. Estimate based on keywords
     estimated_duration = None
     if time_constraint:
         start_h, start_m = map(int, time_constraint[0].split(':'))
         end_h, end_m = map(int, time_constraint[1].split(':'))
-        estimated_duration = (end_h * 60 + end_m) - (start_h * 60 + start_m)
-    else:
-        estimated_duration = estimate_duration_from_title(title)
+        # Calculate diff in minutes, handling day wrap if needed (though parser doesn't assume wrap here)
+        diff_mins = (end_h * 60 + end_m) - (start_h * 60 + start_m)
+        if diff_mins > 0:
+            estimated_duration = diff_mins
+    
+    if not estimated_duration:
+        # Check for explicit duration in text
+        explicit_duration = extract_duration_from_text(full_text)
+        if explicit_duration:
+            estimated_duration = explicit_duration
+        else:
+            estimated_duration = estimate_duration_from_title(title)
     
     category = categorize_task(title, description)
     

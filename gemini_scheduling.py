@@ -29,14 +29,14 @@ class GeminiSchedulingAgent:
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found in .env")
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.5-pro')
+        self.model = genai.GenerativeModel('gemini-flash-latest')
     
-    def schedule_tasks(self, tasks: List[Task], flexible_events: List[Tuple[str, int]]) -> bool:
+    def schedule_tasks(self, tasks: List[Task], flexible_events: List[Tuple[str, int, str, str]]) -> bool:
         """
         Main scheduling method using Gemini AI
         Args:
             tasks: List of tasks to schedule
-            flexible_events: List of (event_name, duration_minutes) for flexible placement
+            flexible_events: List of (event_name, duration_minutes, preferred_start, preferred_end)
         Returns:
             bool: Whether scheduling was successful
         """
@@ -178,25 +178,38 @@ Focus on:
         
         return score
     
-    def _place_flexible_events(self, flexible_events: List[Tuple[str, int]]):
-        """Place flexible daily events (meals, breaks, etc.) intelligently"""
-        for event_name, duration_minutes in flexible_events:
-            # Distribute throughout the week
+    def _place_flexible_events(self, flexible_events: List[Tuple[str, int, str, str]]):
+        """Place flexible daily events (meals, breaks, etc.) on each day of the week"""
+        for event_name, duration_minutes, pref_start, pref_end in flexible_events:
+            # Place on every day of the week (these are daily events)
             for day_name in self.schedule.schedules:
                 day_schedule = self.schedule.schedules[day_name]
                 
-                # Try to find a gap and place the event
-                placed = self._find_and_place_event(day_schedule, event_name, duration_minutes)
-                if placed:
-                    break
+                # Try to find a gap within preferred time range
+                self._find_and_place_event(day_schedule, event_name, duration_minutes, pref_start, pref_end)
     
     def _find_and_place_event(self, day_schedule: DailySchedule, event_name: str, 
-                              duration_minutes: int) -> bool:
-        """Try to place an event in a day's schedule"""
+                              duration_minutes: int, pref_start: str = "09:00", 
+                              pref_end: str = "21:00") -> bool:
+        """Try to place an event in a day's schedule within preferred time range"""
         blocks_needed = duration_minutes // self.block_duration_minutes
         
-        # Try to find a gap
+        # Convert preferred times to minutes for comparison
+        pref_start_h, pref_start_m = map(int, pref_start.split(':'))
+        pref_end_h, pref_end_m = map(int, pref_end.split(':'))
+        pref_start_mins = pref_start_h * 60 + pref_start_m
+        pref_end_mins = pref_end_h * 60 + pref_end_m
+        
+        # Try to find a gap within preferred time range
         for i in range(len(day_schedule.blocks) - blocks_needed + 1):
+            block = day_schedule.blocks[i]
+            block_start_h, block_start_m = map(int, block.start_time.split(':'))
+            block_start_mins = block_start_h * 60 + block_start_m
+            
+            # Check if this block is within preferred time range
+            if block_start_mins < pref_start_mins or block_start_mins >= pref_end_mins:
+                continue
+            
             gap = all(
                 not day_schedule.blocks[i + j].task_name 
                 for j in range(blocks_needed)
@@ -206,7 +219,7 @@ Focus on:
                 for j in range(blocks_needed):
                     block = day_schedule.blocks[i + j]
                     block.task_name = event_name
-                    block.category = "breaks"
+                    block.category = "personal"
                     block.is_flexible = False
                 return True
         
@@ -214,13 +227,38 @@ Focus on:
     
     def _schedule_task(self, task: Task) -> bool:
         """
-        Schedule a single task into the weekly schedule
+        Schedule a single task into tomorrow's schedule (with spillover to next day if needed)
         Returns True if successfully scheduled
         """
         duration_blocks = (task.estimated_duration or 60) // self.block_duration_minutes
         
-        # Try to find a suitable time slot
-        for day_name in self.schedule.schedules:
+        # Determine start day based on current time
+        # If it's late night (e.g., 2 AM) but before the day's start time (e.g., 9 AM),
+        # we want to plan for "Today" (the morning that is about to come).
+        # Otherwise, plan for "Tomorrow".
+        now = datetime.now()
+        start_hour = int(os.getenv('SCHEDULE_START_HOUR', 9))
+        
+        if now.hour < start_hour:
+            # It's technically "today" (e.g. Tuesday 2 AM), and we want to plan for Tuesday 9 AM
+            target_start_day = now
+        else:
+            # It's after start time (e.g. Tuesday 10 AM), plan for Wednesday
+            target_start_day = now + timedelta(days=1)
+            
+        target_day_name = target_start_day.strftime("%A")  # e.g., "Monday"
+        
+        # Get the day after for spillover
+        day_after = target_start_day + timedelta(days=1)
+        day_after_name = day_after.strftime("%A")
+        
+        # Try target day first, then day after if needed
+        target_days = [target_day_name, day_after_name]
+        
+        for day_name in target_days:
+            if day_name not in self.schedule.schedules:
+                continue
+                
             day_schedule = self.schedule.schedules[day_name]
             
             # Find the best time to place this task (afternoon/evening for projects)
@@ -244,6 +282,24 @@ Focus on:
                 )
                 
                 if len(consecutive_blocks) >= duration_blocks:
+                    # Pick a random color for this task
+                    import random
+                    pastel_colors = [
+                        "#E57373", # Light Red
+                        "#64B5F6", # Light Blue
+                        "#81C784", # Light Green
+                        "#FFB74D", # Light Orange
+                        "#BA68C8", # Light Purple
+                        "#4DB6AC", # Teal
+                        "#F06292", # Pink
+                        "#FF8A65", # Deep Orange
+                        "#7986CB", # Indigo
+                        "#4DD0E1", # Cyan
+                        "#A1887F", # Brown
+                        "#90A4AE", # Blue Grey
+                    ]
+                    task_color = random.choice(pastel_colors)
+                    
                     # Place the task
                     for idx in consecutive_blocks[:duration_blocks]:
                         block = day_schedule.blocks[idx]
@@ -251,6 +307,7 @@ Focus on:
                         block.task_id = task.id
                         block.category = task.category
                         block.is_flexible = False
+                        block.color = task_color
                     
                     return True
         

@@ -29,34 +29,60 @@ def cli():
 
 @cli.command()
 @click.option('--day', type=click.Choice(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']), help='Specific day to schedule')
-def sync(day):
+@click.option('--debug', is_flag=True, help='Use cached data instead of calling APIs')
+def sync(day, debug):
     """Sync tasks from Google Tasks and generate schedule using Gemini AI"""
     try:
         click.echo("🔄 Starting schedule synchronization...")
+        if debug:
+            click.echo("🐛 DEBUG MODE ACTIVATED: Using cached data")
         
-        # Step 1: Authenticate with Google Tasks
-        click.echo("\n📝 Authenticating with Google Tasks...")
-        try:
-            tasks_api = GoogleTasksAPI()
-            click.echo("✓ Google Tasks authenticated")
-        except Exception as e:
-            click.echo(f"Error: Failed to authenticate with Google Tasks - {e}", err=True)
-            sys.exit(1)
-        
-        # Step 2: Fetch tasks from Google Tasks
-        click.echo("\n📋 Fetching tasks from Google Tasks...")
-        todo_items = tasks_api.get_important_tasks()
-        
-        if not todo_items:
-            click.echo("Warning: No tasks found in Google Tasks")
-            todo_items = []
+        # Step 1 & 2: Authenticate and Fetch tasks
+        tasks = []
+        if debug and os.path.exists('tasks_cache.json'):
+            click.echo("\n📋 Loading tasks from cache...")
+            with open('tasks_cache.json', 'r') as f:
+                tasks_data = json.load(f)
+                # Reconstruct Task objects from dictionary if needed, or just use as is if compatible
+                # For simplicity in this flow, we might need to adjust or validat
+                # But actually, we need Task objects for the scheduler. 
+                # Let's assume we cache the raw todo_items or parsed tasks.
+                # Let's cache the parsed tasks data.
+                from schedule_models import Task
+                tasks = [Task(**t) for t in tasks_data]
+            click.echo(f"✓ Loaded {len(tasks)} tasks from cache")
+            
+        elif not debug:
+            click.echo("\n📝 Authenticating with Google Tasks...")
+            try:
+                tasks_api = GoogleTasksAPI()
+                click.echo("✓ Google Tasks authenticated")
+                
+                click.echo("\n📋 Fetching tasks from Google Tasks...")
+                todo_items = tasks_api.get_important_tasks()
+                
+                if not todo_items:
+                    click.echo("Warning: No tasks found in Google Tasks")
+                    todo_items = []
+                else:
+                    click.echo(f"✓ Found {len(todo_items)} tasks")
+                
+                # Step 3: Parse tasks
+                click.echo("\n🔍 Parsing tasks...")
+                tasks = [parse_task_from_todo(item) for item in todo_items]
+                click.echo(f"✓ Parsed {len(tasks)} tasks")
+                
+                # Cache tasks for debug mode
+                with open('tasks_cache.json', 'w') as f:
+                    # Convert tasks to dicts for JSON serialization
+                    json.dump([t.__dict__ for t in tasks], f, indent=2)
+                    
+            except Exception as e:
+                click.echo(f"Error: Google Tasks failed - {e}", err=True)
+                sys.exit(1)
         else:
-            click.echo(f"✓ Found {len(todo_items)} tasks")
-        
-        # Step 3: Parse tasks
-        click.echo("\n🔍 Parsing tasks...")
-        tasks = [parse_task_from_todo(item) for item in todo_items]
-        click.echo(f"✓ Parsed {len(tasks)} tasks")
+            click.echo("Error: Debug mode enabled but no cache found. Run without --debug first.", err=True)
+            sys.exit(1)
         
         # Step 4: Load fixed events configuration
         click.echo("\n📅 Loading fixed events configuration...")
@@ -64,58 +90,95 @@ def sync(day):
         click.echo(f"✓ Loaded {len(fixed_events_config)} fixed events")
         
         # Step 5: Create and populate schedule
-        click.echo("\n🗓️ Creating schedule structure...")
-        schedule = create_empty_schedule()
+        # In debug mode, if we have a full schedule output, we might want to skip this?
+        # But we might want to re-run placement logic. 
+        # Actually, let's load the FULL schedule from json if in debug mode to save Gemini calls.
         
-        # Set week start date
-        today = datetime.now()
-        week_start = today - timedelta(days=today.weekday())
-        schedule.week_start_date = week_start.strftime("%Y-%m-%d")
-        
-        click.echo("✓ Schedule structure created")
-        
-        # Step 6: Place fixed events
-        click.echo("\n🔧 Placing fixed events...")
-        schedule, flexible_events = place_fixed_events(schedule, fixed_events_config)
-        click.echo(f"✓ Placed fixed events")
-        if flexible_events:
-            click.echo(f"  - {len(flexible_events)} flexible events to place intelligently")
-        
-        # Step 7: Run Gemini scheduling agent
-        click.echo("\n🤖 Running Gemini AI scheduling agent...")
-        try:
-            agent = GeminiSchedulingAgent(schedule)
-            success = agent.schedule_tasks(tasks, flexible_events)
+        schedule = None
+        if debug and os.path.exists('schedule_output.json'):
+             click.echo("\n🗓️ Loading schedule from cache (skipping Gemini)...")
+             from schedule_models import WeeklySchedule, DailySchedule, TimeBlock
+             
+             with open('schedule_output.json', 'r') as f:
+                 schedule_data = json.load(f)
+                 
+             # Reconstruct WeeklySchedule object
+             schedule = create_empty_schedule()
+             schedule.week_start_date = schedule_data.get('week_start_date')
+             
+             for day_name, day_data in schedule_data.get('days', {}).items():
+                 if day_name in schedule.schedules:
+                     # Reconstruct blocks
+                     blocks = []
+                     for b_data in day_data.get('blocks', []):
+                         block = TimeBlock(start_time=b_data['time'].split('-')[0], end_time=b_data['time'].split('-')[1])
+                         block.task_name = b_data.get('task')
+                         block.category = b_data.get('category')
+                         block.is_flexible = b_data.get('is_flexible', False)
+                         block.color = b_data.get('color')
+                         blocks.append(block)
+                     schedule.schedules[day_name].blocks = blocks
+             
+             click.echo("✓ Schedule loaded from cache")
+
+        else:
+            # Normal flow or valid cache was not found/usable
+            click.echo("\n🗓️ Creating schedule structure...")
+            schedule = create_empty_schedule()
             
-            if success:
-                click.echo("✓ Tasks scheduled successfully")
-            else:
-                click.echo("Warning: Some tasks could not be scheduled", err=True)
-        except Exception as e:
-            click.echo(f"Error: Gemini scheduling failed - {e}", err=True)
-            sys.exit(1)
-        
+            # Set week start date
+            today = datetime.now()
+            week_start = today - timedelta(days=today.weekday())
+            schedule.week_start_date = week_start.strftime("%Y-%m-%d")
+            
+            click.echo("✓ Schedule structure created")
+            
+            # Step 6: Place fixed events
+            click.echo("\n🔧 Placing fixed events...")
+            schedule, flexible_events = place_fixed_events(schedule, fixed_events_config)
+            click.echo(f"✓ Placed fixed events")
+            if flexible_events:
+                click.echo(f"  - {len(flexible_events)} flexible events to place intelligently")
+            
+            # Step 7: Run Gemini scheduling agent
+            if not debug:
+                click.echo("\n🤖 Running Gemini AI scheduling agent...")
+                try:
+                    agent = GeminiSchedulingAgent(schedule)
+                    success = agent.schedule_tasks(tasks, flexible_events)
+                    
+                    if success:
+                        click.echo("✓ Tasks scheduled successfully")
+                    else:
+                        click.echo("Warning: Some tasks could not be scheduled", err=True)
+                except Exception as e:
+                    click.echo(f"Error: Gemini scheduling failed - {e}", err=True)
+                    sys.exit(1)
+            
         # Step 8: Load color scheme
         click.echo("\n🎨 Loading color scheme...")
         with open('config/color_scheme.json', 'r') as f:
             color_scheme = json.load(f)
         click.echo("✓ Color scheme loaded")
         
-        # Step 9: Save to local JSON
-        click.echo("\n💾 Saving schedule to local JSON...")
-        save_schedule_to_json(schedule, 'schedule_output.json')
-        click.echo("✓ Saved to schedule_output.json")
+        # Step 9: Save to local JSON (updating cache if we just ran)
+        if not debug:
+            click.echo("\n💾 Saving schedule to local JSON...")
+            save_schedule_to_json(schedule, 'schedule_output.json')
+            click.echo("✓ Saved to schedule_output.json")
         
         # Step 10: Sync to Google Sheets
         click.echo("\n📊 Syncing to Google Sheets...")
         try:
-            # Get start_cell from config (default to A1)
+             # Get start_cell and sheet_name from config
             with open('config/fixed_events.yaml', 'r') as f:
                 config = yaml.safe_load(f)
-            start_cell = config.get('google_sheets', {}).get('start_cell', 'A1')
+            google_sheets_config = config.get('google_sheets', {})
+            start_cell = google_sheets_config.get('start_cell', 'A1')
+            sheet_name = google_sheets_config.get('sheet_name')
             
             sheets_manager = GoogleSheetsManager()
-            if sheets_manager.sync_schedule_to_sheets(schedule, color_scheme, start_cell=start_cell):
+            if sheets_manager.sync_schedule_to_sheets(schedule, color_scheme, start_cell=start_cell, sheet_name=sheet_name):
                 click.echo("✓ Successfully synced to Google Sheets")
             else:
                 click.echo("Error: Failed to sync to Google Sheets", err=True)

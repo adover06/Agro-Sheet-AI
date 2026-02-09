@@ -13,45 +13,110 @@
 
 # Google Sheets configuration
 google_sheets:
+  # Name of the sheet (tab) to update. If empty, defaults to the first sheet.
+  sheet_name: "Andrew Dover Current"
   # Starting cell reference where the schedule will be pasted (e.g., "C22")
-  start_cell: "C22"
+  start_cell: "B27"
 
 fixed_events:
-  # Classes and scheduled events with fixed times
-  - name: "Math Class"
-    days: ["Monday", "Wednesday", "Friday"]
+  # Tuesday/Thursday Classes
+  - name: "ISE 130"
+    days: ["Tuesday", "Thursday"]
     start_time: "09:00"
     end_time: "10:30"
     flexible: false
     is_free: false
     category: "school"
 
+  - name: "MATH 33LA"
+    days: ["Tuesday", "Thursday"]
+    start_time: "10:30"
+    end_time: "12:00"
+    flexible: false
+    is_free: false
+    category: "school"
+
+  # Monday/Wednesday Classes
+  - name: "HIST 15"
+    days: ["Monday", "Wednesday"]
+    start_time: "12:00"
+    end_time: "13:30"
+    flexible: false
+    is_free: false
+    category: "school"
+
+  - name: "CMPE 102"
+    days: ["Monday", "Wednesday"]
+    start_time: "13:30"
+    end_time: "15:00"
+    flexible: false
+    is_free: false
+    category: "school"
+
+  - name: "CS 151"
+    days: ["Monday", "Wednesday"]
+    start_time: "16:30"
+    end_time: "18:00"
+    flexible: false
+    is_free: false
+    category: "school"
+
+  # Weekly Fixed Events
+  - name: "Bible Study"
+    days: ["Monday"]
+    start_time: "18:00"
+    end_time: "19:30"
+    flexible: false
+    is_free: false
+    category: "church"
+
+  - name: "D-Ship"
+    days: ["Friday"]
+    start_time: "10:00"
+    end_time: "11:30"
+    flexible: false
+    is_free: false
+    category: "church"
+
+  - name: "Church"
+    days: ["Sunday"]
+    start_time: "18:30"
+    end_time: "20:00"
+    flexible: false
+    is_free: false
+    category: "church"
+
+  # Daily Fixed Habits (Lunch)
   - name: "Lunch Break"
     days: ["Daily"]
     start_time: "12:00"
     end_time: "13:00"
-    flexible: false
+    flexible: true
     is_free: true
     category: "break"
 
-  # Flexible daily obligations (agent will place these intelligently)
-  - name: "Morning Prayer"
+  # Flexible Daily Obligations
+  - name: "Prayer"
     days: ["Daily"]
-    duration: 30  # minutes
+    duration: 30
     flexible: true
     is_free: false
-    category: "personal"
+    category: "church"
+    preferred_start: "06:00"
+    preferred_end: "20:00"
 
   - name: "Cooking Dinner"
     days: ["Daily"]
-    duration: 60  # minutes
+    duration: 60
     flexible: true
     is_free: false
     category: "personal"
+    preferred_start: "19:00"
+    preferred_end: "21:00"
 
-  - name: "Quick Break/Snack"
-    days: ["Daily"]
-    duration: 15  # minutes
-    flexible: true
-    is_free: true
-    category: "break"
+  # - name: "Quick Break/Snack"
+  #   days: ["Daily"]
+  #   duration: 15
+  #   flexible: true
+  #   is_free: true
+  #   category: "break"

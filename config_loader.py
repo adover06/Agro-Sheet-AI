@@ -17,6 +17,8 @@ class FixedEvent:
     flexible: bool = False
     is_free: bool = False  # free time vs. committed time
     category: str = "personal"
+    preferred_start: Optional[str] = None  # HH:MM - preferred earliest time
+    preferred_end: Optional[str] = None    # HH:MM - preferred latest time
 
 
 def load_fixed_events_config(filepath: str) -> List[FixedEvent]:
@@ -41,7 +43,9 @@ def load_fixed_events_config(filepath: str) -> List[FixedEvent]:
                 duration=event_data.get('duration'),
                 flexible=event_data.get('flexible', False),
                 is_free=event_data.get('is_free', False),
-                category=event_data.get('category', 'personal')
+                category=event_data.get('category', 'personal'),
+                preferred_start=event_data.get('preferred_start'),
+                preferred_end=event_data.get('preferred_end')
             )
             events.append(event)
     

@@ -15,6 +15,11 @@
       "rgb": [39, 174, 96],
       "description": "Personal activities (prayer, cooking, etc)"
     },
+    "church": {
+      "hex": "#F1C40F",
+      "rgb": [241, 196, 15],
+      "description": "Church activities"
+    },
     "breaks": {
       "hex": "#F39C12",
       "rgb": [243, 156, 18],

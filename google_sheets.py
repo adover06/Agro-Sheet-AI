@@ -96,7 +96,49 @@ class GoogleSheetsManager:
             print(f"Error authenticating with Google Sheets: {e}")
             raise
     
-    def sync_schedule_to_sheets(self, schedule: WeeklySchedule, color_scheme: Dict, start_cell: str = "A1") -> bool:
+    def _get_sheet_info(self, sheet_name: Optional[str] = None) -> tuple:
+        """
+        Get sheet ID and name. 
+        If sheet_name is provided, find its ID.
+        If not provided, return the first sheet's ID and name.
+        Returns: (sheet_id, sheet_title)
+        """
+        try:
+            if not self.service:
+                print("Error: Sheets service not initialized")
+                return (0, "Sheet1")
+                
+            spreadsheet = self.service.spreadsheets().get(spreadsheetId=self.spreadsheet_id).execute()
+            spreadsheet_title = spreadsheet.get('properties', {}).get('title', 'Unknown Title')
+            print(f"📄 Connected to Spreadsheet: '{spreadsheet_title}'")
+            
+            sheets = spreadsheet.get('sheets', [])
+            
+            if not sheets:
+                raise ValueError("No sheets found in spreadsheet")
+            
+            if sheet_name:
+                # Find sheet by name
+                available_sheets = []
+                for sheet in sheets:
+                    title = sheet['properties']['title']
+                    available_sheets.append(title)
+                    if title == sheet_name:
+                        return (sheet['properties']['sheetId'], title)
+                
+                # If not found, raise error with available sheets
+                print(f"Available sheets: {', '.join(available_sheets)}")
+                raise ValueError(f"Sheet '{sheet_name}' not found. Available sheets: {available_sheets}")
+            else:
+                # Default to first sheet
+                first_sheet = sheets[0]
+                return (first_sheet['properties']['sheetId'], first_sheet['properties']['title'])
+                
+        except Exception as e:
+            print(f"Error getting sheet info: {e}")
+            raise
+
+    def sync_schedule_to_sheets(self, schedule: WeeklySchedule, color_scheme: Dict, start_cell: str = "A1", sheet_name: Optional[str] = None) -> bool:
         """
         Sync weekly schedule to Google Sheets
         Updates 7 columns (Mon-Sun) with schedule data
@@ -105,8 +147,12 @@ class GoogleSheetsManager:
             schedule: WeeklySchedule object
             color_scheme: Dict with color definitions
             start_cell: Starting cell reference (e.g., "C22") where schedule will be pasted
+            sheet_name: Name of the sheet (tab) to update. If None, uses first sheet.
         """
         try:
+            # Get sheet ID and update sheet_name if it was None
+            sheet_id, target_sheet_name = self._get_sheet_info(sheet_name)
+            
             # Prepare data for each day
             day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             
@@ -119,7 +165,13 @@ class GoogleSheetsManager:
             # Calculate end cell reference
             end_col = chr(ord('A') + start_col + 6)  # 7 columns for days
             end_row = start_row + len(values)
-            range_str = f"{start_cell}:{end_col}{end_row}"
+            
+            # Construct range string with sheet name
+            # Note: If sheet name has spaces, it needs quotes
+            if ' ' in target_sheet_name:
+                range_str = f"'{target_sheet_name}'!{start_cell}:{end_col}{end_row}"
+            else:
+                range_str = f"{target_sheet_name}!{start_cell}:{end_col}{end_row}"
             
             # Update the sheet
             body = {
@@ -134,9 +186,9 @@ class GoogleSheetsManager:
             ).execute()
             
             # Apply colors to cells
-            self._apply_colors_to_sheet(schedule, day_order, color_scheme, start_col, start_row)
+            self._apply_colors_to_sheet(schedule, day_order, color_scheme, start_col, start_row, sheet_id)
             
-            print(f"Successfully synced schedule to Google Sheets")
+            print(f"Successfully synced schedule to Google Sheet: '{target_sheet_name}'")
             return True
         
         except HttpError as error:
@@ -172,9 +224,9 @@ class GoogleSheetsManager:
         """
         values = []
         
-        # Header row with day names
-        header = day_order
-        values.append(header)
+        # Header row removed as requested
+        # header = day_order
+        # values.append(header)
         
         # Time blocks (9 AM to midnight = 30 blocks)
         time_blocks_data = self._get_all_time_blocks(schedule, day_order)
@@ -184,9 +236,18 @@ class GoogleSheetsManager:
             for day_idx, day_name in enumerate(day_order):
                 if block_idx < len(time_blocks_data[day_name]):
                     block = time_blocks_data[day_name][block_idx]
-                    # Only show task name, no timestamp
-                    cell_value = block['task'] if block['task'] else ""
-                    row.append(cell_value)
+                    current_task = block['task'] if block['task'] else ""
+                    
+                    # Check if previous block had same task to avoid repeating title
+                    if block_idx > 0 and block_idx - 1 < len(time_blocks_data[day_name]):
+                        prev_block = time_blocks_data[day_name][block_idx - 1]
+                        prev_task = prev_block['task'] if prev_block['task'] else ""
+                        
+                        # If same task as above, show empty string
+                        if current_task and current_task == prev_task:
+                            current_task = ""
+                            
+                    row.append(current_task)
                 else:
                     row.append("")
             values.append(row)
@@ -215,7 +276,7 @@ class GoogleSheetsManager:
         return blocks_data
     
     def _apply_colors_to_sheet(self, schedule: WeeklySchedule, day_order: List[str], color_scheme: Dict, 
-                                start_col: int = 0, start_row: int = 1):
+                                start_col: int = 0, start_row: int = 1, sheet_id: int = 0):
         """
         Apply background colors to cells based on task category
         Uses Google Sheets batchUpdate API
@@ -223,6 +284,7 @@ class GoogleSheetsManager:
         Args:
             start_col: Column offset (0-based)
             start_row: Row offset (1-based)
+            sheet_id: ID of the sheet to update
         """
         try:
             requests = []
@@ -236,29 +298,39 @@ class GoogleSheetsManager:
                 col_idx = day_col_map[day_name] + start_col
                 
                 for block_idx, block in enumerate(daily_schedule.blocks):
-                    # Row index: start_row is 1-based, convert to 0-based for API, +1 for header
-                    row_idx = (start_row - 1) + block_idx + 1
+                    # Row index: start_row is 1-based, convert to 0-based for API
+                    row_idx = (start_row - 1) + block_idx
                     
-                    # Normalize category to lowercase for matching
-                    category = (block.category or 'unscheduled').lower()
+                    color_hex = None
                     
-                    # Map common category variations
-                    category_map = {
-                        'project': 'projects',
-                        'break': 'breaks',
-                        'fixed': 'fixed_events',
-                        'empty': 'unscheduled'
-                    }
-                    category = category_map.get(category, category)
+                    # 1. Use explicit block color if available
+                    if block.color and block.color.startswith('#'):
+                        color_hex = block.color
                     
-                    if category in color_scheme.get('color_scheme', {}):
-                        color_hex = color_scheme['color_scheme'][category]['hex']
+                    # 2. Fallback to category color
+                    if not color_hex:
+                        # Normalize category to lowercase for matching
+                        category = (block.category or 'unscheduled').lower()
+                        
+                        # Map common category variations
+                        category_map = {
+                            'project': 'projects',
+                            'break': 'breaks',
+                            'fixed': 'fixed_events',
+                            'empty': 'unscheduled'
+                        }
+                        category = category_map.get(category, category)
+                        
+                        if category in color_scheme.get('color_scheme', {}):
+                            color_hex = color_scheme['color_scheme'][category]['hex']
+                    
+                    if color_hex:
                         rgb = self._hex_to_rgb_normalized(color_hex)
                         
                         requests.append({
                             'repeatCell': {
                                 'range': {
-                                    'sheetId': 0,  # Assuming first sheet
+                                    'sheetId': sheet_id,
                                     'startRowIndex': row_idx,
                                     'startColumnIndex': col_idx,
                                     'endRowIndex': row_idx + 1,

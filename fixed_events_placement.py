@@ -6,14 +6,15 @@ from config_loader import FixedEvent, get_events_for_day
 from schedule_models import DailySchedule, WeeklySchedule, TimeBlock
 
 
-def place_fixed_events(schedule: WeeklySchedule, fixed_events: List[FixedEvent]) -> Tuple[WeeklySchedule, List[Tuple[str, int]]]:
+def place_fixed_events(schedule: WeeklySchedule, fixed_events: List[FixedEvent]) -> Tuple[WeeklySchedule, List[Tuple[str, int, str, str]]]:
     """
     Place fixed events in the schedule
     Returns: (updated_schedule, list_of_flexible_events)
     
-    Flexible events are returned separately for intelligent placement by the agent
+    Flexible events are returned as tuples: (name, duration, preferred_start, preferred_end)
     """
     flexible_events = []
+    seen_flexible = set()  # Track which flexible events we've already collected
     
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     
@@ -23,9 +24,15 @@ def place_fixed_events(schedule: WeeklySchedule, fixed_events: List[FixedEvent])
         
         for event in day_events:
             if event.flexible:
-                # Collect flexible events for later placement
-                if event.duration:
-                    flexible_events.append((event.name, event.duration))
+                # Collect flexible events for later placement (deduplicate by name)
+                if event.duration and event.name not in seen_flexible:
+                    flexible_events.append((
+                        event.name, 
+                        event.duration,
+                        event.preferred_start or "09:00",  # Default to 9 AM
+                        event.preferred_end or "21:00"     # Default to 9 PM
+                    ))
+                    seen_flexible.add(event.name)
             else:
                 # Place fixed-time events immediately
                 _place_fixed_time_event(daily_schedule, event)
