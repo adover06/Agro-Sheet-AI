@@ -8,3 +8,8 @@ config/credentials1.json
 config/google_credentials1.json
 config/google_credentials.json
 schedule_output.json
+*.md
+!README.md
+!QUICKSTART.md
+!QUICKSTART_GOOGLE.md
+!SETUP_CHECKLIST.md
