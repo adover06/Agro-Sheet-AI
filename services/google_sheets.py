@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from schedule_models import WeeklySchedule, DailySchedule
+from core.schedule_models import WeeklySchedule, DailySchedule
 from dotenv import load_dotenv
 import json as json_module
 

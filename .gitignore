@@ -8,10 +8,15 @@ config/credentials1.json
 config/google_credentials1.json
 config/google_credentials.json
 config/sheets_token.json
-schedule_output.json
-CONVERSION_SUMMARY.txt
+
+# Output files
+output/schedule_output.json
+output/tasks_cache.json
+output/schedule_demo.json
+
+# Documentation (except essential)
+docs/
 *.md
 !QUICKSTART.md
 !SETUP_CHECKLIST.md
 !README.md
-tasks_cache.json

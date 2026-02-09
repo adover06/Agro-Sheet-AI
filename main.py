@@ -10,13 +10,13 @@ import click
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-from schedule_models import create_empty_schedule, save_schedule_to_json, WeeklySchedule
-from task_parser import parse_task_from_todo, parse_time_from_text, categorize_task
-from config_loader import load_fixed_events_config
-from fixed_events_placement import place_fixed_events
-from gemini_scheduling import GeminiSchedulingAgent
-from google_tasks import GoogleTasksAPI
-from google_sheets import GoogleSheetsManager
+from core.schedule_models import create_empty_schedule, save_schedule_to_json, WeeklySchedule, Task, TimeBlock
+from core.task_parser import parse_task_from_todo, parse_time_from_text, categorize_task
+from core.config_loader import load_fixed_events_config
+from core.fixed_events_placement import place_fixed_events
+from agents.gemini_scheduling import GeminiSchedulingAgent
+from services.google_tasks import GoogleTasksAPI
+from services.google_sheets import GoogleSheetsManager
 
 load_dotenv()
 
@@ -39,16 +39,15 @@ def sync(day, debug):
         
         # Step 1 & 2: Authenticate and Fetch tasks
         tasks = []
-        if debug and os.path.exists('tasks_cache.json'):
+        if debug and os.path.exists('output/tasks_cache.json'):
             click.echo("\n📋 Loading tasks from cache...")
-            with open('tasks_cache.json', 'r') as f:
+            with open('output/tasks_cache.json', 'r') as f:
                 tasks_data = json.load(f)
                 # Reconstruct Task objects from dictionary if needed, or just use as is if compatible
                 # For simplicity in this flow, we might need to adjust or validat
                 # But actually, we need Task objects for the scheduler. 
                 # Let's assume we cache the raw todo_items or parsed tasks.
                 # Let's cache the parsed tasks data.
-                from schedule_models import Task
                 tasks = [Task(**t) for t in tasks_data]
             click.echo(f"✓ Loaded {len(tasks)} tasks from cache")
             
@@ -73,7 +72,7 @@ def sync(day, debug):
                 click.echo(f"✓ Parsed {len(tasks)} tasks")
                 
                 # Cache tasks for debug mode
-                with open('tasks_cache.json', 'w') as f:
+                with open('output/tasks_cache.json', 'w') as f:
                     # Convert tasks to dicts for JSON serialization
                     json.dump([t.__dict__ for t in tasks], f, indent=2)
                     
@@ -95,11 +94,10 @@ def sync(day, debug):
         # Actually, let's load the FULL schedule from json if in debug mode to save Gemini calls.
         
         schedule = None
-        if debug and os.path.exists('schedule_output.json'):
+        if debug and os.path.exists('output/schedule_output.json'):
              click.echo("\n🗓️ Loading schedule from cache (skipping Gemini)...")
-             from schedule_models import WeeklySchedule, DailySchedule, TimeBlock
              
-             with open('schedule_output.json', 'r') as f:
+             with open('output/schedule_output.json', 'r') as f:
                  schedule_data = json.load(f)
                  
              # Reconstruct WeeklySchedule object
@@ -164,8 +162,8 @@ def sync(day, debug):
         # Step 9: Save to local JSON (updating cache if we just ran)
         if not debug:
             click.echo("\n💾 Saving schedule to local JSON...")
-            save_schedule_to_json(schedule, 'schedule_output.json')
-            click.echo("✓ Saved to schedule_output.json")
+            save_schedule_to_json(schedule, 'output/schedule_output.json')
+            click.echo("✓ Saved to output/schedule_output.json")
         
         # Step 10: Sync to Google Sheets
         click.echo("\n📊 Syncing to Google Sheets...")
@@ -277,11 +275,11 @@ def setup_openai():
 def view_schedule():
     """View the current schedule from saved JSON"""
     try:
-        if not os.path.exists('schedule_output.json'):
+        if not os.path.exists('output/schedule_output.json'):
             click.echo("Error: No schedule found. Run 'sync' first.", err=True)
             sys.exit(1)
         
-        with open('schedule_output.json', 'r') as f:
+        with open('output/schedule_output.json', 'r') as f:
             schedule = json.load(f)
         
         click.echo("📅 Weekly Schedule")

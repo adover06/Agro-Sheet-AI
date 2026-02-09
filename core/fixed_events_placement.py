@@ -2,8 +2,8 @@
 Fixed events scheduling logic
 """
 from typing import List, Dict, Tuple
-from config_loader import FixedEvent, get_events_for_day
-from schedule_models import DailySchedule, WeeklySchedule, TimeBlock
+from core.config_loader import FixedEvent, get_events_for_day
+from core.schedule_models import DailySchedule, WeeklySchedule, TimeBlock
 
 
 def place_fixed_events(schedule: WeeklySchedule, fixed_events: List[FixedEvent]) -> Tuple[WeeklySchedule, List[Tuple[str, int, str, str]]]:

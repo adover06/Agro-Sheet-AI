@@ -2,10 +2,11 @@
 Gemini Pro AI agent for intelligent task scheduling
 """
 import os
+import random
 from typing import List, Optional, Dict, Tuple
 from datetime import datetime, timedelta
-from schedule_models import Task, TimeBlock, DailySchedule, WeeklySchedule
-from task_parser import round_to_nearest_30_min
+from core.schedule_models import Task, TimeBlock, DailySchedule, WeeklySchedule
+from core.task_parser import round_to_nearest_30_min
 import google.generativeai as genai
 from dotenv import load_dotenv
 import json
@@ -283,7 +284,6 @@ Focus on:
                 
                 if len(consecutive_blocks) >= duration_blocks:
                     # Pick a random color for this task
-                    import random
                     pastel_colors = [
                         "#E57373", # Light Red
                         "#64B5F6", # Light Blue

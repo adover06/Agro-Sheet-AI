@@ -3,7 +3,7 @@ Task parsing and time-aware utilities
 """
 import re
 from typing import Optional, Tuple
-from schedule_models import Task
+from core.schedule_models import Task
 
 
 def parse_time_from_text(text: str) -> Optional[Tuple[str, str]]:
