@@ -1,0 +1,1517 @@
+{
+  "week_start_date": "2026-02-02",
+  "days": {
+    "Monday": {
+      "day": "Monday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": "Morning Prayer",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Tuesday": {
+      "day": "Tuesday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": "Work on AI project 2-4pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": "Work on AI project 2-4pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": "Work on AI project 2-4pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": "Work on AI project 2-4pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": "Quick Break/Snack",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": "Cooking Dinner",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": "Personal project 7pm-9pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": "Personal project 7pm-9pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": "Personal project 7pm-9pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": "Personal project 7pm-9pm",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": "Code review for team",
+          "category": "projects",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Wednesday": {
+      "day": "Wednesday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": "React homework",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": "React homework",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": "React homework",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Thursday": {
+      "day": "Thursday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": "Calculus study session",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": "Calculus study session",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": "Calculus study session",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": "Calculus study session",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Friday": {
+      "day": "Friday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": "Math Class",
+          "category": "school",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": "Quick email check",
+          "category": "personal",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Saturday": {
+      "day": "Saturday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    },
+    "Sunday": {
+      "day": "Sunday",
+      "date": null,
+      "blocks": [
+        {
+          "time": "09:00-09:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "09:30-10:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:00-10:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "10:30-11:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:00-11:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "11:30-12:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:00-12:30",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "12:30-13:00",
+          "task": "Lunch Break",
+          "category": "break",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:00-13:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "13:30-14:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:00-14:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "14:30-15:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:00-15:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "15:30-16:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:00-16:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "16:30-17:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:00-17:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "17:30-18:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:00-18:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "18:30-19:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:00-19:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "19:30-20:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:00-20:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "20:30-21:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:00-21:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "21:30-22:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:00-22:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "22:30-23:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:00-23:30",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        },
+        {
+          "time": "23:30-24:00",
+          "task": null,
+          "category": "empty",
+          "color": null,
+          "duration_blocks": 1
+        }
+      ]
+    }
+  }
+}

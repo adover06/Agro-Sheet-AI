@@ -47,9 +47,46 @@ class GoogleTasksAuthManager:
                 "Please download it from Google Cloud Console and save it there."
             )
         
-        flow = InstalledAppFlow.from_client_secrets_file(
-            self.credentials_file, SCOPES)
-        self.credentials = flow.run_local_server(port=0)
+        try:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                self.credentials_file, SCOPES)
+            # Use http://localhost:8080/callback as the redirect URI
+            # This matches what should be in Google Cloud Console
+            self.credentials = flow.run_local_server(
+                port=8080, 
+                open_browser=True,
+                authorization_prompt_message='Please visit this URL: {url}'
+            )
+        except OSError as e:
+            if "Address already in use" in str(e):
+                print("\n⚠️  Port 8080 is already in use")
+                print("=" * 60)
+                print("The app needs port 8080 to be available for Google OAuth.")
+                print("\nOptions:")
+                print("1. Stop whatever is using port 8080")
+                print("2. Restart your computer to free up ports")
+                print("3. Run: python main.py sync")
+                print("=" * 60)
+            raise
+        except Exception as e:
+            error_msg = str(e)
+            if "redirect_uri_mismatch" in error_msg or "doesn't comply" in error_msg:
+                print("\n⚠️  Google OAuth Configuration Issue")
+                print("=" * 60)
+                print("The redirect URI in your Google Cloud Console is not configured correctly.")
+                print("\nTo fix:")
+                print("1. Go to: https://console.cloud.google.com/apis/credentials")
+                print("2. Find your OAuth 2.0 Desktop application credentials")
+                print("3. Click the edit button (pencil icon)")
+                print("4. Under 'Authorized redirect URIs', make sure you have:")
+                print("   http://localhost:8080/callback")
+                print("\n5. If it's not there, click 'ADD URI' and add it")
+                print("6. Click SAVE")
+                print("\nThen delete the cache and try again:")
+                print("   rm config/google_tasks_token.pkl")
+                print("   python main.py sync")
+                print("=" * 60)
+            raise
         
         # Save credentials for future use
         self._save_credentials()

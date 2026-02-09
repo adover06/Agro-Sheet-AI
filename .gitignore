@@ -1,3 +1,10 @@
 venv/
 .env
 __pycache__/
+*.pkl
+config/credentials.json
+config/credentials1.json
+*token.pkl
+config/google_credentials1.json
+config/google_credentials.json
+schedule_output.json

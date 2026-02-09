@@ -29,7 +29,7 @@ class GeminiSchedulingAgent:
         if not api_key:
             raise ValueError("GEMINI_API_KEY not found in .env")
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
     
     def schedule_tasks(self, tasks: List[Task], flexible_events: List[Tuple[str, int]]) -> bool:
         """
@@ -125,7 +125,8 @@ Focus on:
         formatted = []
         for i, task in enumerate(tasks, 1):
             duration = task.estimated_duration or 60
-            priority = "High" if task.importance >= 3 else "Medium" if task.importance >= 2 else "Low"
+            priority_map = {'high': "High", 'normal': "Medium", 'low': "Low"}
+            priority = priority_map.get(task.importance.lower(), "Medium")
             formatted.append(
                 f"{i}. {task.title} (Category: {task.category}, Priority: {priority}, "
                 f"Duration: {duration}min, Due: {task.due_date or 'No deadline'})"

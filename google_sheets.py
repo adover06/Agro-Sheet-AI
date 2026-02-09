@@ -35,8 +35,24 @@ class GoogleSheetsManager:
     def _authenticate(self):
         """Authenticate with Google Sheets API"""
         try:
-            # Try to use service account credentials first
-            if os.path.exists(self.credentials_file):
+            if not os.path.exists(self.credentials_file):
+                raise FileNotFoundError(f"Credentials file not found at {self.credentials_file}")
+            
+            # Load credentials file and check if it's OAuth or Service Account
+            with open(self.credentials_file, 'r') as f:
+                creds_data = json.load(f)
+            
+            # Check if it's an OAuth credentials file (has 'web' key or 'client_id')
+            if 'web' in creds_data or ('client_id' in creds_data and 'client_secret' in creds_data):
+                # OAuth Desktop Flow
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    self.credentials_file,
+                    SCOPES
+                )
+                credentials = flow.run_local_server(port=8080, open_browser=False)
+                self.service = build('sheets', 'v4', credentials=credentials)
+            elif 'type' in creds_data and creds_data['type'] == 'service_account':
+                # Service Account Flow
                 self.service = build(
                     'sheets',
                     'v4',
@@ -46,7 +62,7 @@ class GoogleSheetsManager:
                     )
                 )
             else:
-                raise FileNotFoundError(f"Credentials file not found at {self.credentials_file}")
+                raise ValueError("Credentials file format not recognized. Must be OAuth 2.0 or Service Account JSON.")
         
         except Exception as e:
             print(f"Error authenticating with Google Sheets: {e}")
