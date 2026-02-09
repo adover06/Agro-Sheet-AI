@@ -11,6 +11,11 @@
 # 
 # Days: Can be "Monday" through "Sunday" or use "Daily" for recurring
 
+# Google Sheets configuration
+google_sheets:
+  # Starting cell reference where the schedule will be pasted (e.g., "C22")
+  start_cell: "C22"
+
 fixed_events:
   # Classes and scheduled events with fixed times
   - name: "Math Class"

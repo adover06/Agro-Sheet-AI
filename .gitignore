@@ -7,9 +7,10 @@ config/credentials1.json
 *token.pkl
 config/google_credentials1.json
 config/google_credentials.json
+config/sheets_token.json
 schedule_output.json
+CONVERSION_SUMMARY.txt
 *.md
-!README.md
 !QUICKSTART.md
-!QUICKSTART_GOOGLE.md
 !SETUP_CHECKLIST.md
+!README.md

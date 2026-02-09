@@ -25,6 +25,7 @@ class GoogleSheetsManager:
     def __init__(self):
         self.spreadsheet_id = os.getenv('GOOGLE_SHEETS_ID')
         self.credentials_file = os.getenv('GOOGLE_SHEETS_CREDENTIALS', 'config/google_credentials.json')
+        self.token_file = 'config/sheets_token.json'  # Cache OAuth token here
         self.service = None
         
         if not self.spreadsheet_id:
@@ -33,7 +34,7 @@ class GoogleSheetsManager:
         self._authenticate()
     
     def _authenticate(self):
-        """Authenticate with Google Sheets API"""
+        """Authenticate with Google Sheets API with token caching"""
         try:
             if not os.path.exists(self.credentials_file):
                 raise FileNotFoundError(f"Credentials file not found at {self.credentials_file}")
@@ -42,17 +43,44 @@ class GoogleSheetsManager:
             with open(self.credentials_file, 'r') as f:
                 creds_data = json.load(f)
             
+            credentials = None
+            
             # Check if it's an OAuth credentials file (has 'web' key or 'client_id')
             if 'web' in creds_data or ('client_id' in creds_data and 'client_secret' in creds_data):
-                # OAuth Desktop Flow
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_file,
-                    SCOPES
-                )
-                credentials = flow.run_local_server(port=8080, open_browser=False)
+                # OAuth Desktop Flow - Check for cached token first
+                from google.oauth2.credentials import Credentials as OAuthCredentials
+                
+                # Try to load cached token
+                if os.path.exists(self.token_file):
+                    credentials = OAuthCredentials.from_authorized_user_file(self.token_file, SCOPES)
+                
+                # If no valid credentials, get new ones
+                if not credentials or not credentials.valid:
+                    if credentials and credentials.expired and credentials.refresh_token:
+                        # Refresh the expired token
+                        credentials.refresh(Request())
+                    else:
+                        # Run OAuth flow for first-time authentication
+                        # Use prompt='consent' to force Google to send a refresh token
+                        flow = InstalledAppFlow.from_client_secrets_file(
+                            self.credentials_file,
+                            SCOPES
+                        )
+                        credentials = flow.run_local_server(
+                            port=8080, 
+                            open_browser=False,
+                            prompt='consent'  # Force consent to get refresh_token
+                        )
+                    
+                    # Save the credentials for future runs
+                    with open(self.token_file, 'w') as token:
+                        token.write(credentials.to_json())
+                    print(f"✓ OAuth token saved to {self.token_file}")
+                
                 self.service = build('sheets', 'v4', credentials=credentials)
+                
             elif 'type' in creds_data and creds_data['type'] == 'service_account':
-                # Service Account Flow
+                # Service Account Flow (no caching needed - uses service account key directly)
                 self.service = build(
                     'sheets',
                     'v4',
@@ -68,17 +96,30 @@ class GoogleSheetsManager:
             print(f"Error authenticating with Google Sheets: {e}")
             raise
     
-    def sync_schedule_to_sheets(self, schedule: WeeklySchedule, color_scheme: Dict) -> bool:
+    def sync_schedule_to_sheets(self, schedule: WeeklySchedule, color_scheme: Dict, start_cell: str = "A1") -> bool:
         """
         Sync weekly schedule to Google Sheets
         Updates 7 columns (Mon-Sun) with schedule data
+        
+        Args:
+            schedule: WeeklySchedule object
+            color_scheme: Dict with color definitions
+            start_cell: Starting cell reference (e.g., "C22") where schedule will be pasted
         """
         try:
             # Prepare data for each day
             day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             
+            # Parse start cell to get row and column offsets
+            start_col, start_row = self._parse_cell_reference(start_cell)
+            
             # Get all values to update
             values = self._prepare_sheet_values(schedule, day_order, color_scheme)
+            
+            # Calculate end cell reference
+            end_col = chr(ord('A') + start_col + 6)  # 7 columns for days
+            end_row = start_row + len(values)
+            range_str = f"{start_cell}:{end_col}{end_row}"
             
             # Update the sheet
             body = {
@@ -87,13 +128,13 @@ class GoogleSheetsManager:
             
             result = self.service.spreadsheets().values().update(
                 spreadsheetId=self.spreadsheet_id,
-                range="A1:G31",
+                range=range_str,
                 valueInputOption='RAW',
                 body=body
             ).execute()
             
             # Apply colors to cells
-            self._apply_colors_to_sheet(schedule, day_order, color_scheme)
+            self._apply_colors_to_sheet(schedule, day_order, color_scheme, start_col, start_row)
             
             print(f"Successfully synced schedule to Google Sheets")
             return True
@@ -104,6 +145,25 @@ class GoogleSheetsManager:
         except Exception as e:
             print(f"Error syncing schedule: {e}")
             return False
+    
+    def _parse_cell_reference(self, cell_ref: str) -> tuple:
+        """
+        Parse a cell reference like 'C22' into column index and row number
+        Returns (column_index, row_number) where column_index is 0-based
+        """
+        import re
+        match = re.match(r'([A-Z]+)(\d+)', cell_ref.upper())
+        if not match:
+            return (0, 1)  # Default to A1
+        
+        col_str, row_str = match.groups()
+        
+        # Convert column letters to index (A=0, B=1, etc.)
+        col_idx = 0
+        for char in col_str:
+            col_idx = col_idx * 26 + (ord(char) - ord('A'))
+        
+        return (col_idx, int(row_str))
     
     def _prepare_sheet_values(self, schedule: WeeklySchedule, day_order: List[str], color_scheme: Dict) -> List[List]:
         """
@@ -124,7 +184,8 @@ class GoogleSheetsManager:
             for day_idx, day_name in enumerate(day_order):
                 if block_idx < len(time_blocks_data[day_name]):
                     block = time_blocks_data[day_name][block_idx]
-                    cell_value = f"{block['time']}\n{block['task']}" if block['task'] else block['time']
+                    # Only show task name, no timestamp
+                    cell_value = block['task'] if block['task'] else ""
                     row.append(cell_value)
                 else:
                     row.append("")
@@ -153,10 +214,15 @@ class GoogleSheetsManager:
         
         return blocks_data
     
-    def _apply_colors_to_sheet(self, schedule: WeeklySchedule, day_order: List[str], color_scheme: Dict):
+    def _apply_colors_to_sheet(self, schedule: WeeklySchedule, day_order: List[str], color_scheme: Dict, 
+                                start_col: int = 0, start_row: int = 1):
         """
         Apply background colors to cells based on task category
         Uses Google Sheets batchUpdate API
+        
+        Args:
+            start_col: Column offset (0-based)
+            start_row: Row offset (1-based)
         """
         try:
             requests = []
@@ -167,19 +233,34 @@ class GoogleSheetsManager:
                 if not daily_schedule:
                     continue
                 
-                col_idx = day_col_map[day_name]
+                col_idx = day_col_map[day_name] + start_col
                 
-                for row_idx, block in enumerate(daily_schedule.blocks, start=1):  # start=1 for header
-                    if block.category in color_scheme['color_scheme']:
-                        color_hex = color_scheme['color_scheme'][block.category]['hex']
+                for block_idx, block in enumerate(daily_schedule.blocks):
+                    # Row index: start_row is 1-based, convert to 0-based for API, +1 for header
+                    row_idx = (start_row - 1) + block_idx + 1
+                    
+                    # Normalize category to lowercase for matching
+                    category = (block.category or 'unscheduled').lower()
+                    
+                    # Map common category variations
+                    category_map = {
+                        'project': 'projects',
+                        'break': 'breaks',
+                        'fixed': 'fixed_events',
+                        'empty': 'unscheduled'
+                    }
+                    category = category_map.get(category, category)
+                    
+                    if category in color_scheme.get('color_scheme', {}):
+                        color_hex = color_scheme['color_scheme'][category]['hex']
                         rgb = self._hex_to_rgb_normalized(color_hex)
                         
                         requests.append({
                             'repeatCell': {
                                 'range': {
                                     'sheetId': 0,  # Assuming first sheet
-                                    'rowIndex': row_idx,
-                                    'columnIndex': col_idx,
+                                    'startRowIndex': row_idx,
+                                    'startColumnIndex': col_idx,
                                     'endRowIndex': row_idx + 1,
                                     'endColumnIndex': col_idx + 1
                                 },
@@ -202,6 +283,7 @@ class GoogleSheetsManager:
                     spreadsheetId=self.spreadsheet_id,
                     body=body
                 ).execute()
+                print(f"Applied colors to {len(requests)} cells")
         
         except Exception as e:
             print(f"Warning: Could not apply colors to sheet: {e}")

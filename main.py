@@ -5,6 +5,7 @@ Now using Google Tasks and Gemini Pro
 import os
 import sys
 import json
+import yaml
 import click
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -108,8 +109,13 @@ def sync(day):
         # Step 10: Sync to Google Sheets
         click.echo("\n📊 Syncing to Google Sheets...")
         try:
+            # Get start_cell from config (default to A1)
+            with open('config/fixed_events.yaml', 'r') as f:
+                config = yaml.safe_load(f)
+            start_cell = config.get('google_sheets', {}).get('start_cell', 'A1')
+            
             sheets_manager = GoogleSheetsManager()
-            if sheets_manager.sync_schedule_to_sheets(schedule, color_scheme):
+            if sheets_manager.sync_schedule_to_sheets(schedule, color_scheme, start_cell=start_cell):
                 click.echo("✓ Successfully synced to Google Sheets")
             else:
                 click.echo("Error: Failed to sync to Google Sheets", err=True)
